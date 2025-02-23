@@ -1,36 +1,21 @@
 const express = require('express');
-const Auth = require('../models/Auth');
-const bcrypt = require('bcrypt');
+const authController = require('../controllers/authController');
+const verifyToken = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-// Register user
-router.post('/register', async (req, res) => {
-  try {
-    const { name, phone, email, password } = req.body;
-    const newUser = new Auth({ name, phone, email, password });
-    await newUser.save();
-    res.status(201).json({ message: 'User registered successfully' });
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
+// Register User
+router.post('/register', authController.register);
 
-// Login user
-router.post('/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await Auth.findOne({ email });
+// Login Routes
+router.post('/login/email', authController.loginWithEmail);
+router.post('/login/phone', authController.loginWithPhone);
 
-    if (!user) return res.status(404).json({ message: 'User not found' });
+// Fetch User Details (Protected)
+router.get('/user', verifyToken, authController.getUser);
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
-
-    res.status(200).json({ message: 'Login successful' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+// Forgot Password Routes
+router.post('/forgot-password/email', authController.forgotPasswordEmail);
+router.post('/forgot-password/phone', authController.forgotPasswordPhone);
 
 module.exports = router;

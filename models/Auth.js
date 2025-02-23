@@ -6,6 +6,8 @@ const authSchema = new mongoose.Schema({
   phone: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  state: { type: String, required: true },
+  district: { type: String, required: true },
   donation: { type: mongoose.Schema.Types.ObjectId, ref: 'Donation' },
   membership: { type: mongoose.Schema.Types.ObjectId, ref: 'Membership' },
 });
