@@ -102,3 +102,29 @@ exports.forgotPasswordPhone = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+
+exports.updateUserVerification = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { verified } = req.body;
+
+    const user = await Auth.findByIdAndUpdate(userId, { verified }, { new: true });
+
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    res.status(200).json({ message: 'User verification updated', user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Fetch All Users (Only Admins)
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await Auth.find().select('-password');
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
