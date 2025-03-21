@@ -5,12 +5,14 @@ const authSchema = new mongoose.Schema({
   name: { type: String, required: true },
   phone: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
-  verified: {type: Boolean,required:true},
+  verified: { type: Boolean, required: true },
   password: { type: String, required: true },
   state: { type: String, required: true },
   district: { type: String, required: true },
   donation: { type: mongoose.Schema.Types.ObjectId, ref: 'Donation' },
   membership: { type: mongoose.Schema.Types.ObjectId, ref: 'Membership' },
+}, {
+  timestamps: true // 👈 This adds createdAt and updatedAt automatically
 });
 
 authSchema.pre('save', async function (next) {

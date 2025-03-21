@@ -20,7 +20,7 @@ router.post('/forgot-password/email', authController.forgotPasswordEmail);
 router.post('/forgot-password/phone', authController.forgotPasswordPhone);
 
 router.patch('/verify-user/:userId', adminAuth, authController.updateUserVerification);
-router.get('/list-users', adminAuth, authController.getAllUsers);
+router.get('/list-users', authController.getAllUsers);
 
 module.exports = router;
 
