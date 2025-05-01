@@ -25,6 +25,30 @@ exports.register = async (req, res) => {
   }
 };
 
+
+exports.changePassword = async (req, res) => {
+  try {
+    const { newPassword } = req.body;
+
+    if (!newPassword) {
+      return res.status(400).json({ message: 'New password is required' });
+    }
+
+    const user = await Auth.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({ message: 'Password updated successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 // Login with Email
 exports.loginWithEmail = async (req, res) => {
   try {
@@ -128,3 +152,17 @@ exports.getAllUsers = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const { _id } = req.user;
+
+    const deletedUser = await Auth.findByIdAndDelete(_id);
+    if (!deletedUser) return res.status(404).json({ message: 'User not found' });
+
+    res.status(200).json({ message: 'User deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
